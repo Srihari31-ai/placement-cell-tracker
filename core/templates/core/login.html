@@ -1,0 +1,24 @@
+{% extends "core/base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<div class="auth">
+    <div class="auth-side">
+        <h2>Placement Cell Tracker</h2>
+        <p>One place for drives, eligibility and results.</p>
+        <ul>
+            <li>See only the drives you qualify for</li>
+            <li>Apply in one click</li>
+            <li>Track every interview round</li>
+        </ul>
+    </div>
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        <h2>Log in</h2>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Log in</button>
+        <p>New here? <a href="{% url 'register' %}">Create an account</a></p>
+    </form>
+</div>
+{% endblock %}

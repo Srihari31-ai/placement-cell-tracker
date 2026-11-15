@@ -1,0 +1,64 @@
+{% extends "core/base.html" %}
+{% block title %}Applicants{% endblock %}
+{% block content %}
+<h2>{{ company.name }} - {{ company.role }}</h2>
+<p>Min CGPA {{ company.min_cgpa }} | Package {{ company.package_lpa }} LPA</p>
+<p><a href="{% url 'admin_drives' %}">Back to drives</a></p>
+
+{% if applications %}
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Student</th><th>Branch</th><th>CGPA</th><th>Skills</th>
+        <th>Resume</th><th>Applied on</th><th>Status</th>
+        <th>Rounds</th>
+    </tr>
+    {% for a in applications %}
+    <tr>
+        <td>{{ a.student.name }}<br>{{ a.student.email }}</td>
+        <td>{{ a.student.branch }}</td>
+        <td>{{ a.student.cgpa }}</td>
+        <td>{{ a.student.skills|join:", " }}</td>
+        <td>
+            {% if a.student.resume_link %}
+                <a href="{{ a.student.resume_link }}" target="_blank" rel="noopener">View</a>
+            {% else %}-{% endif %}
+        </td>
+        <td>{{ a.applied_date|date:"d M Y" }}</td>
+        <td>
+            <form method="post" action="{% url 'admin_update_status' a.id %}">
+                {% csrf_token %}
+                <select name="status">
+                    {% for s in statuses %}
+                        <option value="{{ s }}" {% if a.status == s %}selected{% endif %}>{{ s }}</option>
+                    {% endfor %}
+                </select>
+                <button type="submit">Update</button>
+            </form>
+        </td>
+        <td>
+            {% for r in a.rounds %}
+            <form method="post" action="{% url 'admin_update_round' a.id forloop.counter0 %}">
+                {% csrf_token %}
+                {{ r.name }}
+                <select name="result">
+                    <option value="Pending" {% if r.result == "Pending" %}selected{% endif %}>Pending</option>
+                    <option value="Cleared" {% if r.result == "Cleared" %}selected{% endif %}>Cleared</option>
+                    <option value="Rejected" {% if r.result == "Rejected" %}selected{% endif %}>Rejected</option>
+                </select>
+                <button type="submit">Save</button>
+            </form>
+            {% endfor %}
+
+            <form method="post" action="{% url 'admin_add_round' a.id %}">
+                {% csrf_token %}
+                <input type="text" name="name" placeholder="e.g. Aptitude" required>
+                <button type="submit">Add round</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No one has applied to this drive yet.</p>
+{% endif %}
+{% endblock %}

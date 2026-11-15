@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+{% block content %}
+<h2>Students</h2>
+<p>Enter the CGPA and backlogs from the university records, then verify.</p>
+<form method="post" action="{% url 'admin_students_import' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <p>Bulk verify: upload a CSV with columns <code>email,cgpa,backlogs</code></p>
+    <input type="file" name="file" accept=".csv" required>
+    <button type="submit">Import</button>
+</form>
+<br>
+
+<table border="1" cellpadding="6">
+  <tr>
+    <th>Name</th><th>Email</th><th>Branch</th>
+    <th>CGPA</th><th>Backlogs</th><th>Status</th><th>Action</th>
+  </tr>
+  {% for s in students %}
+  <tr>
+    <form method="post" action="{% url 'admin_student_verify' s.id %}">
+      {% csrf_token %}
+      <td>{{ s.name }}</td>
+      <td>{{ s.email }}</td>
+      <td>{{ s.branch }}</td>
+      <td><input type="number" name="cgpa" step="0.01" min="0" max="10" value="{{ s.cgpa }}" required></td>
+      <td><input type="number" name="backlogs" min="0" value="{{ s.backlogs }}" required></td>
+      <td>{% if s.verified %}Verified{% else %}Pending{% endif %}</td>
+      <td><button type="submit">{% if s.verified %}Update{% else %}Verify{% endif %}</button></td>
+    </form>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

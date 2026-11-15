@@ -1,0 +1,50 @@
+{% extends "core/base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<div class="hero">
+    <div>
+        <p class="eyebrow">Admin console</p>
+        <h2>Placement Cell Admin</h2>
+    </div>
+    <div class="badges">
+        <span class="badge">Signed in as {{ admin.name }}</span>
+    </div>
+</div>
+
+<div class="cards">
+    <div class="card"><span class="num">{{ stats.students }}</span><span class="lbl">Students</span></div>
+    <div class="card"><span class="num">{{ stats.drives }}</span><span class="lbl">Drives</span></div>
+    <div class="card"><span class="num">{{ stats.applications }}</span><span class="lbl">Applications</span></div>
+    <div class="card accent"><span class="num">{{ stats.selected }}</span><span class="lbl">Selected</span></div>
+</div>
+
+<div class="split">
+    <div>
+        <h3>Placement by branch</h3>
+        {% for b in by_branch %}
+        <div class="bar-row">
+            <span class="bar-name">{{ b.branch }}</span>
+            <div class="bar-track">
+                <div class="bar-fill" style="width: {{ b.percent|stringformat:'f' }}%"></div>
+            </div>
+            <span class="bar-val">{{ b.placed }}/{{ b.total }} &middot; {{ b.percent }}%</span>
+        </div>
+        {% empty %}
+        <p>No students yet.</p>
+        {% endfor %}
+    </div>
+
+    <div>
+        <h3>Applications by status</h3>
+        <table>
+            <tr><th>Status</th><th>Count</th></tr>
+            {% for s in by_status %}
+            <tr>
+                <td><span class="chip {{ s.status|lower }}">{{ s.status }}</span></td>
+                <td>{{ s.count }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}

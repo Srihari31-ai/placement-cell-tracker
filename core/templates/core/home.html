@@ -1,0 +1,75 @@
+{% extends "core/base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="hero">
+    <div>
+        <p class="eyebrow">Student dashboard</p>
+        <h2>Welcome, {{ student.name }}</h2>
+    </div>
+    <div class="badges">
+        <span class="badge">{{ student.branch }}</span>
+        <span class="badge">CGPA {{ student.cgpa }}</span>
+        {% if offer %}<span class="badge best">Best offer {{ offer }} LPA</span>{% endif %}
+    </div>
+</div>
+
+{% if offer %}
+<p class="notice"><strong>You have an offer of {{ offer }} LPA.</strong>
+   You can only apply to drives that pay more than this.</p>
+{% endif %}
+
+{% if not student.verified %}
+<p class="notice"><strong>Your profile is waiting for verification by the placement cell.</strong>
+   Drives will appear here once it is verified.</p>
+{% endif %}
+
+<h3>Drives you are eligible for</h3>
+{% if drives %}
+<table border="1" cellpadding="6">
+    <tr><th>Company</th><th>Role</th><th>Package (LPA)</th><th>Skill match</th><th>Apply by</th><th>Action</th></tr>
+    {% for d in drives %}
+    <tr>
+        <td>{{ d.company.name }}</td>
+        <td>{{ d.company.role }}</td>
+        <td>{{ d.company.package_lpa }}</td>
+        <td>{{ d.matched }} / {{ d.needed }}</td>
+        <td>{{ d.company.deadline|date:"d M Y"|default:"-" }}</td>
+        <td>
+            {% if d.status %}
+                <span class="chip {{ d.status|lower }}">{{ d.status }}</span>
+            {% else %}
+                <form method="post" action="{% url 'apply' d.company.id %}">
+                    {% csrf_token %}
+                    <button type="submit">Apply</button>
+                </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No eligible drives right now.</p>
+{% endif %}
+
+<h3>My applications</h3>
+{% if my_apps %}
+<table border="1" cellpadding="6">
+    <tr><th>Company</th><th>Role</th><th>Status</th><th>Rounds</th><th>Applied on</th></tr>
+    {% for a in my_apps %}
+    <tr>
+        <td>{{ a.company.name }}</td>
+        <td>{{ a.company.role }}</td>
+        <td><span class="chip {{ a.status|lower }}">{{ a.status }}</span></td>
+        <td>
+            {% for r in a.rounds %}
+                {{ r.name }}: {{ r.result }}{% if not forloop.last %}<br>{% endif %}
+            {% empty %}-{% endfor %}
+        </td>
+        <td>{{ a.applied_date|date:"d M Y"|default:"-" }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>You have not applied to any drive yet.</p>
+{% endif %}
+{% endblock %}

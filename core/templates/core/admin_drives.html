@@ -1,0 +1,31 @@
+{% extends "core/base.html" %}
+{% block title %}Drives{% endblock %}
+{% block content %}
+<h2>Placement drives</h2>
+<p><a href="{% url 'admin_drive_add' %}">+ Post a new drive</a></p>
+
+{% if drives %}
+<table border="1" cellpadding="6">
+    <tr>
+        <th>Company</th><th>Role</th><th>Package (LPA)</th>
+        <th>Min CGPA</th><th>Branches</th><th>Skills</th>
+        <th>Max backlogs</th><th>Apply by</th><th>Applicants</th>
+    </tr>
+    {% for d in drives %}
+    <tr>
+        <td>{{ d.company.name }}</td>
+        <td>{{ d.company.role }}</td>
+        <td>{{ d.company.package_lpa }}</td>
+        <td>{{ d.company.min_cgpa }}</td>
+        <td>{{ d.company.eligible_branches|join:", " }}</td>
+        <td>{{ d.company.required_skills|join:", " }}</td>
+        <td>{{ d.company.max_backlogs }}</td>
+        <td>{{ d.company.deadline|date:"d M Y"|default:"-" }}</td>
+        <td><a href="{% url 'admin_applicants' d.company.id %}">{{ d.applicants }} (view)</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No drives posted yet.</p>
+{% endif %}
+{% endblock %}

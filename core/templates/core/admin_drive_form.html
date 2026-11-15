@@ -1,0 +1,57 @@
+{% extends "core/base.html" %}
+{% block title %}Post a drive{% endblock %}
+{% block content %}
+<h2>Post a new drive</h2>
+
+<form method="post" class="form-card">
+    {% csrf_token %}
+    <div class="form-grid">
+        <div class="field">
+            <label>Company</label>
+            <input name="name" placeholder="e.g. Zoho" value="{{ form.name }}" required>
+        </div>
+        <div class="field">
+            <label>Role</label>
+            <input name="role" placeholder="e.g. Software Engineer" value="{{ form.role }}" required>
+        </div>
+        <div class="field">
+            <label>Package (LPA)</label>
+            <input name="package_lpa" placeholder="e.g. 7.5" value="{{ form.package_lpa }}" required>
+        </div>
+        <div class="field">
+            <label>Minimum CGPA</label>
+            <input name="min_cgpa" placeholder="e.g. 7.0" value="{{ form.min_cgpa }}" required>
+        </div>
+        <div class="field">
+            <label>Max backlogs allowed</label>
+            <input name="max_backlogs" placeholder="0 = none" value="{{ form.max_backlogs }}">
+        </div>
+        <div class="field">
+            <label>Last date to apply</label>
+            <input type="date" name="deadline" value="{{ form.deadline }}">
+        </div>
+
+        <div class="field full">
+            <label>Eligible branches</label>
+            <div class="checks">
+                {% for b in branches %}
+                <label>
+                    <input type="checkbox" name="branches" value="{{ b }}"
+                        {% if b in selected_branches %}checked{% endif %}> {{ b }}
+                </label>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="field full">
+            <label>Required skills</label>
+            <input name="skills" placeholder="comma separated, e.g. python, sql" value="{{ form.skills }}">
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit">Post drive</button>
+        <a href="{% url 'admin_drives' %}">Back to drives</a>
+    </div>
+</form>
+{% endblock %}

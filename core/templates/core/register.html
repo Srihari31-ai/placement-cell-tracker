@@ -1,0 +1,34 @@
+{% extends "core/base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="auth">
+    <div class="auth-side">
+        <h2>Create your profile</h2>
+        <p>Register once and the tracker shows only the drives you qualify for.</p>
+        <ul>
+            <li>Your CGPA and backlogs are confirmed by the placement cell</li>
+            <li>Skills are matched against each drive</li>
+            <li>Add your resume link for recruiters</li>
+        </ul>
+    </div>
+
+    <form method="post" class="auth-form">
+        {% csrf_token %}
+        <h2>Register</h2>
+        <input type="text" name="name" placeholder="Full name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <select name="branch" required>
+            <option value="">Branch</option>
+            <option>AI</option><option>CSE</option><option>IT</option>
+            <option>ECE</option><option>EEE</option><option>MECH</option>
+        </select>
+        <input type="number" name="cgpa" step="0.01" min="0" max="10" placeholder="CGPA" required>
+        <input type="number" name="backlogs" min="0" value="0" placeholder="Backlogs" required>
+        <input type="text" name="skills" placeholder="Skills, comma separated (python, django)">
+        <input type="url" name="resume_link" placeholder="Resume link (optional)">
+        <button type="submit">Create account</button>
+        <p>Already registered? <a href="{% url 'login' %}">Log in</a></p>
+    </form>
+</div>
+{% endblock %}
